@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>할 일 목록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /*기본 배경과 폰트 설정*/
+            background-color: #eef1f6;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }
+
+        /* 전체 박스 스타일 */
+        .container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 500px;
+        }
+
+        /* 제목 스타일 */
+        h1 {
+            text-align: center;
+            color: #000000;
+        }
+
+        /* 경고 문구 스타일 */
+        span {
+            color: red;
+            font-size: 12px;
+        }
+
+        /* 입력창 스타일 */
+        #todo {
+            width: 70%;
+            padding: 8px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        /* 추가 버튼 스타일 */
+        #add-button {
+            padding: 8px 12px;
+            margin-left: 5px;
+            border: none;
+            background-color: #4c89af;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        #add-button:hover {
+            background-color: #3cb9c2;
+        }
+
+        /* 할 일 목록 전체 영역 */
+        #todo-list {
+            margin-top: 20px;
+        }
+
+        /* 각 할 일 항목 스타일 */
+        #todo-list > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* 텍스트 간격 조절 */
+        #todo-list span {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+
+        /* 제거 버튼 스타일 */
+        #todo-list button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        #todo-list button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.querySelector('#todo');
+    const addButton = document.querySelector('#add-button');
+    const todoList = document.querySelector('#todo-list');
+    const alert = document.querySelector('span');
+
+    const currentId = localStorage.getItem("currentUser");
+
+    // 로그인하지 않았다면 index.html로 이동
+    if (!currentId) {
+        alert("로그인 후 이용해주세요.");
+        location.href = "index.html";
+        return;
+    }
+
+    const todoKey = "User_" + currentId;
+
+    // 저장된 할 일 불러오기
+    function loadTodos() {
+        const saved = localStorage.getItem(todoKey);
+        if (!saved) return;
+
+        const items = JSON.parse(saved);
+        items.forEach(text => createTodoItem(text));
+    }
+
+    // 할 일 저장하기
+    function saveTodos() {
+        const items = [];
+        todoList.querySelectorAll('div').forEach(div => {
+            const text = div.textContent;
+            items.push(text);
+        });
+        localStorage.setItem(todoKey, JSON.stringify(items));
+    }
+
+    // 할 일 항목 추가 (텍스트만)
+    function createTodoItem(textContent) {
+        const item = document.createElement('div');
+        item.textContent = textContent;
+        todoList.appendChild(item);
+    }
+
+    // 추가 버튼 클릭 시
+    function addTodo() {
+        if (input.value !== '') {
+            createTodoItem(input.value);
+            saveTodos();
+            input.value = '';
+            alert.textContent = '';
+        } else {
+            alert.textContent = '할 일을 입력하세요!';
+        }
+    }
+
+    addButton.addEventListener('click', addTodo);
+
+    input.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            addTodo();
+        }
+    });
+
+    loadTodos(); // 페이지 로드시 불러오기
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <h1>할 일 목록</h1>
+        <span></span><br> <!-- 경고 문구 위치 -->
+        <input id="todo"> <!-- 입력창 -->
+        <button id="add-button">추가</button> <!-- 추가 버튼 -->
+        <div id="todo-list"></div> <!-- 할 일 목록 영역 -->
+    </div>
+</body>
+</html>

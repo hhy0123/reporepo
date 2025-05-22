@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 및 로그인</title>
+    <style> /*  style 태그: 문서에 직접 CSS(디자인) 정의 */
+     /* 전체 페이지에 대한 기본 스타일 지정 */
+    body { font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom right, #f0f4f8, #d9e2ec); /* 배경 그라데이션 */
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; }
+    
+        h1 { color: #333;
+    margin-bottom: 10px;
+    }
+
+    input { width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    border: 1px solid #ccccccdc;
+    border-radius: 6px;
+    box-sizing: border-box; } /* 입력창 여백과 안쪽 여백 지정 */
+    
+    .section { background-color: white;
+    border-radius: 10px;
+    padding: 20px 30px;
+    margin: 20px 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+      width: 300px; } /* 각 섹션 사이 간격 */
+
+        button {
+    width: 100%;
+    padding: 10px;
+    background-color: #ad99f0;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+    }
+
+        button:hover {
+      background-color: #6408e4a0; /* 마우스 올렸을 때 색 변화 */
+    }
+    
+        /* 선택 입력값 input의 색상 */
+    input[type="number"],
+    input[type="text"] {
+    background-color: #fdfeff;
+    }
+    </style>
+</head>
+<body>
+    <!-- div: 구역을 나누는 컨테이너 역할. 화면을 구조적으로 구성 -->
+    <!-- 회원가입 영역 -->
+    <h1>회원가입</h1>
+    <div class="section">
+    <!-- input: 사용자로부터 데이터를 입력받는 필드 -->
+    <input type="text" id="signupId" placeholder="아이디"><br>
+    <input type="password" id="signupPw" placeholder="비밀번호"><br>
+    <input type="text" id="signupName" placeholder="이름(선택)">
+    <input type="number" id="signupAge" placeholder="나이(선택)"><br>
+    <!-- onclick 속성으로 함수 실행 -->
+    <button onclick="signUp()">회원가입</button> <!-- 회원가입 버튼: 클릭 시 signUp 함수 실행 -->
+    </div>
+
+    <!-- 로그인 영역 -->
+    <h1>로그인</h1>
+    <div class="section">
+    <input type="text" id="loginId" placeholder="아이디"><br>
+    <input type="password" id="loginPw" placeholder="비밀번호"><br>
+    <button onclick="login()">로그인</button>
+    </div>
+
+    <script>
+    /* script: 코드를 작성하는 영역 */
+    // 회원가입 처리
+    function signUp() {     // function: 특정 동작을 묶어서 정의하는 함수 선언 키워드
+         // const: 상수 선언. 값이 변하지 않음 (여기서는 변수처럼 사용되지만 변경되지 않도록 함)
+         // document.getElementById(...).value: HTML 요소에서 사용자가 입력한 값 가져오기
+        const id = document.getElementById("signupId").value; 
+        const pw = document.getElementById("signupPw").value;
+        const name = document.getElementById("signupName").value;
+        const age = document.getElementById("signupAge").value;
+
+        if (!id || !pw) {  
+        alert("아이디와 비밀번호는 필수입니다.");
+        return;
+        }
+        // 사용자 정보를 객체 형태로 저장
+        const userInfo = { id, pw, name, age };
+        // localStorage: 웹 브라우저에 데이터를 저장하는 저장소 (로컬 컴퓨터에 저장됨)
+        // JSON.stringify: 객체를 문자열로 변환
+        localStorage.setItem("user_" + id, JSON.stringify(userInfo));
+        alert("회원가입 완료!");
+    }
+
+    // 로그인 처리
+    function login() {
+    const id = document.getElementById("loginId").value;
+    const pw = document.getElementById("loginPw").value;
+
+    const userData = localStorage.getItem("user_" + id);
+    // localStorage에서 아이디에 해당하는 데이터 가져오기
+    if (!userData) {
+    alert("존재하지 않는 아이디입니다.");
+    return;
+    }
+
+    const user = JSON.parse(userData);
+    // JSON.parse: 문자열을 다시 객체로 변환
+    // 입력한 비밀번호가 저장된 비밀번호와 일치하는지 확인
+    if (user.pw === pw) {
+    localStorage.setItem("currentUser", id);
+    // 현재 로그인한 사용자 아이디 저장
+    // localStorage 저장 직후 바로 이동 (지연을 주면 더 확실함)
+
+    // 🔸 window.location.href: 페이지를 다른 주소로 이동시킴
+    // setTimeout: 일정 시간(밀리초) 후에 실행
+    setTimeout(() => {
+        window.location.href = "welcome.html";
+    }, 50); // 50밀리초 후 이동
+    } else {
+    alert("비밀번호가 일치하지 않습니다.");
+    }
+}
+    </script>
+</body>
+</html>
